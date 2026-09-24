@@ -1,0 +1,28 @@
+name: Evening Close Fetch (4:15 PM IST)
+
+on:
+  schedule:
+    - cron: '45 10 * * 1-5'   # 10:45 UTC = 4:15 PM IST, Mon-Fri
+  workflow_dispatch:           # lets you run it manually from the Actions tab
+
+permissions:
+  contents: write
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - run: pip install -r requirements.txt
+
+      - run: python fetch_close_data.py
+
+      - uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: 'Auto: evening close fetch (4:15 PM)'
+          file_pattern: '*.xlsx'
