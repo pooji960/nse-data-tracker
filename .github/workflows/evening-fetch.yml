@@ -1,10 +1,9 @@
-
-name: NSE Data Fetch (9:15 AM & 4:15 PM IST)
+name: NSE Data Fetch
 
 on:
   schedule:
-    - cron: '45 3 * * 1-5'    # 9:15 AM IST
-    - cron: '45 10 * * 1-5'   # 4:15 PM IST
+    - cron: '45 3 * * 1-5'
+    - cron: '45 10 * * 1-5'
   workflow_dispatch:
 
 permissions:
@@ -15,25 +14,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
-        with:
-          lfs: true
-
-      - name: Check Excel file
-        run: |
-          echo "Current directory:"
-          pwd
-
-          echo "Files in workspace:"
-          ls -lah
-
-          echo "Checking Excel:"
-          ls -lah Data_Analysis_daily.xlsx || true
-
-          echo "File type:"
-          file Data_Analysis_daily.xlsx || true
 
       - name: Setup Python
         uses: actions/setup-python@v5
@@ -41,16 +23,13 @@ jobs:
           python-version: '3.11'
 
       - name: Install requirements
-        run: |
-          pip install -r requirements.txt
+        run: pip install -r requirements.txt
 
       - name: Fetch NSE data
-        run: |
-          python fetch_close_data.py
+        run: python fetch_close_data.py
 
-      - name: Commit updated Excel
+      - name: Save Excel
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: 'Auto: NSE data fetch'
           file_pattern: '*.xlsx'
-```
