@@ -12,7 +12,16 @@ jobs:
   fetch:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Check Excel file
+  run: |
+    echo "Current directory:"
+    pwd
+    echo "Files in workspace:"
+    ls -lah
+    echo "Checking Excel:"
+    ls -lah Data_Analysis_daily.xlsx || true
+    echo "File type:"
+    file Data_Analysis_daily.xlsx || true
   with:
     lfs: true
 
