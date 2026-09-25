@@ -1,9 +1,11 @@
-name: Evening Close Fetch (4:15 PM IST)
+
+name: NSE Data Fetch (9:15 AM & 4:15 PM IST)
 
 on:
   schedule:
-    - cron: '45 10 * * 1-5'   # 10:45 UTC = 4:15 PM IST, Mon-Fri
-  workflow_dispatch:           # lets you run it manually from the Actions tab
+    - cron: '45 3 * * 1-5'    # 9:15 AM IST
+    - cron: '45 10 * * 1-5'   # 4:15 PM IST
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -11,29 +13,44 @@ permissions:
 jobs:
   fetch:
     runs-on: ubuntu-latest
-    steps:
-      - name: Check Excel file
-  run: |
-    echo "Current directory:"
-    pwd
-    echo "Files in workspace:"
-    ls -lah
-    echo "Checking Excel:"
-    ls -lah Data_Analysis_daily.xlsx || true
-    echo "File type:"
-    file Data_Analysis_daily.xlsx || true
-  with:
-    lfs: true
 
-      - uses: actions/setup-python@v5
+    steps:
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Check Excel file
+        run: |
+          echo "Current directory:"
+          pwd
+
+          echo "Files in workspace:"
+          ls -lah
+
+          echo "Checking Excel:"
+          ls -lah Data_Analysis_daily.xlsx || true
+
+          echo "File type:"
+          file Data_Analysis_daily.xlsx || true
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
-      - run: pip install -r requirements.txt
+      - name: Install requirements
+        run: |
+          pip install -r requirements.txt
 
-      - run: python fetch_close_data.py
+      - name: Fetch NSE data
+        run: |
+          python fetch_close_data.py
 
-      - uses: stefanzweifel/git-auto-commit-action@v5
+      - name: Commit updated Excel
+        uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: 'Auto: evening close fetch (4:15 PM)'
+          commit_message: 'Auto: NSE data fetch'
           file_pattern: '*.xlsx'
+```
