@@ -12,7 +12,12 @@ import openpyxl
 import pandas as pd
 import yfinance as yf
 
-EXCEL_PATH = "Data_Analysis_daily.xlsx"  # <-- change this
+import os
+
+EXCEL_PATH = os.path.join(
+    os.environ["GITHUB_WORKSPACE"],
+    "Data_Analysis_daily.xlsx"
+)  # <-- change this
 SYMBOL_SHEET = "Live Data"        # symbols are read from column A of this sheet
 OUT_SHEET = "Close History"
 MIN_VOLUME = 2_000_000            # 20 lakh shares
